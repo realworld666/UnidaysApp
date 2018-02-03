@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.css">
+    <link rel="stylesheet" href="css/bootstrap-reboot.css">
+    <script src="js/bootstrap.bundle.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/hyperform.css">
+    <style type="text/css">
+
+        .btn.btn-xl {
+            padding: 15px 21px;
+            font-size: 18px;
+            line-height: 1.333333;
+            border-radius: 6px;
+        }
+
+        .reglogform input {
+            margin-bottom: 1em;
+        }
+
+        .navbar-nav > li > a {
+            padding-top: 5px !important;
+            padding-bottom: 0 !important;
+            height: 110px;
+        }
+
+        .display-none {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-6">
+            <div id="divSignup">
+                <h3>
+                    Sign Up
+                </h3>
+                <form id="signup" method="post" action="#">
+                    <div class="form-group row">
+                        <label for="emailField" class="col-sm-5 col-form-label">
+                            Email address
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="email" class="form-control" id="emailField" placeholder="e.g. ryan@example.net"
+                                   required/><br/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+
+                        <label for="passwordField" class="col-sm-5 col-form-label">
+                            Password
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" id="passwordField" required/><br/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+
+                        <label for="confirmPasswordField" class="col-sm-5 col-form-label">
+                            Confirm Password
+                        </label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control"
+                                   id="confirmPasswordField" required
+                                   onblur="CheckConfirm(this, '#passwordField');"><br/>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitButton" class="btn btn-default">
+                        Submit
+                    </button>
+                </form>
+            </div>
+            <div id="divWait" class="text-center display-none">
+                <img src="images/default.gif">
+            </div>
+            <div id="divSuccess" class="text-center reglogform display-none">
+                <h1><i class="glyphicon glyphicon-ok-sign text-success"></i></h1>
+                <h2>Signup Success</h2>
+                <p class="lead">Your account has been created.</p>
+                <p>
+                    <button type="button" id="btnReturnToSignup" class="btn btn-xl btn-info">RETURN TO SIGN UP</button>
+                </p>
+            </div>
+            <div id="divFail" class="text-center reglogform display-none">
+                <h1><i class="glyphicon glyphicon-remove-sign text-danger"></i></h1>
+                <h2>Signup Failed</h2>
+                <p class="lead">Unfortunately there has been a problem creating your account.</p>
+                <p>
+                    <small id="lblExplainProblem"></small>
+                </p>
+                <p>&nbsp;</p>
+                <p>
+                    <button type="button" id="btnTryAgain" class="btn btn-xl btn-primary">Try again?</button>
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+<!-- Page Logic -->
+<script language="javascript">
+
+	$( function()
+	   {
+		   $( '#btnTryAgain' ).click( function()
+		                              {
+			                              FadeSwap( '#divFail', '#divSignup' );
+			                              setTimeout( function()
+			                                          {
+				                                          $( '#emailField' ).focus();
+			                                          }, 200 );
+		                              } );
+
+		   $( '#btnReturnToSignup' ).click( function()
+		                                    {
+			                                    FadeSwap( '#divSuccess', '#divSignup' );
+			                                    setTimeout( function()
+			                                                {
+				                                                $( '#emailField' ).focus();
+			                                                }, 200 );
+		                                    } );
+
+           /* register a custom validator for the confirmation field */
+		   hyperform.addValidator(
+			   document.getElementById( 'confirmPasswordField' ),
+			   function( element )
+			   {
+				   var valid = element.value === document.getElementById( 'passwordField' ).value;
+				   element.setCustomValidity(
+					   valid ?
+						   '' :
+						   'The password does not match.'
+				   );
+				   if( valid )
+				   {
+					   valid = element.value.length >= 8 && document.getElementById( 'passwordField' ).value.length >= 8;
+					   element.setCustomValidity(
+						   valid ?
+							   '' :
+							   'The password must be at least 8 characters long.'
+					   );
+				   }
+				   return valid;
+			   }
+		   );
+
+           /* whenever the password field changes, revalidate the confirmation field,
+            * too */
+		   document.getElementById( 'passwordField' ).addEventListener( 'keyup', function()
+		   {
+			   document.getElementById( 'confirmPasswordField' ).reportValidity();
+		   } );
+
+		   /**
+		    *  Handler for form submission
+		    **/
+		   $( '#submitButton' ).click( function( evt )
+		                               {
+			                               preventActions( evt );
+
+			                               var email = $( '#emailField' ).val().trim();
+			                               var password = $( '#passwordField' ).val().trim();
+			                               var confirmPassword = $( '#confirmPasswordField' ).val().trim();
+
+			                               FadeSwap( '#divSignup', '#divWait' );
+
+			                               $.ajax( {
+				                                       headers: {
+					                                       'Accept': 'application/json',
+					                                       'Content-Type': 'application/json'
+				                                       },
+				                                       'type': 'POST',
+				                                       'url': 'http://localhost:57741/api/user',
+				                                       'data': JSON.stringify( {
+					                                                               "email": email,
+					                                                               "password": password
+				                                                               } ),
+				                                       'success': function( data )
+				                                       {
+					                                       FadeSwap( '#divWait', '#divSuccess' );
+				                                       }
+			                                       } ).fail( function( err )
+			                                                 {
+				                                                 $( '#lblExplainProblem' ).text( "Response text: " + err.statusText );
+				                                                 FadeSwap( '#divWait', '#divFail' );
+			                                                 } );
+		                               } );
+
+		   /**
+		    *  Utility function for cross-browser halt of form submission
+		    **/
+		   function preventActions( evt )
+		   {
+			   evt = evt || window.event;
+
+			   if( evt.stopPropagation && evt.preventDefault )
+			   {
+				   evt.stopPropagation();
+				   evt.preventDefault();
+			   }
+			   else
+			   {
+				   evt.cancelBubble = true;
+				   evt.returnValue = false;
+			   }
+		   }
+
+		   /**
+		    * Swaps the two given element's visibilities using fadeIn and fadeOut consecutively
+		    **/
+		   function FadeSwap( hide, show, time )
+		   {
+			   time = time || 100;
+
+			   $( hide ).hide();
+			   $( show ).show();
+		   }
+
+
+	   } )
+	;
+
+</script>
+<script src="js/hyperform.min.js"></script>
+<script>hyperform( window );</script>
+<script src="js/deparam.min.js"></script>
+
+</body>
+</html>

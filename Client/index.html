@@ -193,7 +193,14 @@
 				                                       }
 			                                       } ).fail( function( err )
 			                                                 {
-				                                                 $( '#lblExplainProblem' ).text( "Response text: " + err.statusText );
+			                                                 	if ( err.responseText )
+			                                                    {
+				                                                    $( '#lblExplainProblem' ).text( "Response text: " + err.responseText );
+			                                                    }
+			                                                    else
+                                                                {
+	                                                                $( '#lblExplainProblem' ).text( "" );
+                                                                }
 				                                                 FadeSwap( '#divWait', '#divFail' );
 			                                                 } );
 		                               } );

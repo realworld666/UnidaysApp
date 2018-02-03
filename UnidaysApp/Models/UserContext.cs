@@ -11,6 +11,16 @@ namespace UnidaysApp.Models
 	{
 		public virtual DbSet<User> Users { get; set; }
 
+		public UserContext( DbContextOptions<UserContext> options )
+			: base( options )
+		{
+
+		}
+
+		public UserContext()
+		{
+
+		}
 
 		protected override void OnModelCreating( ModelBuilder modelBuilder )
 		{

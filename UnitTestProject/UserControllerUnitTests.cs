@@ -77,6 +77,25 @@ namespace UnitTestProject
 
 		}
 
+		[Fact]
+		public void TestDuplicateEmail()
+		{
+			// Arrange
+			UserController controller = GetController();
+
+			// Act
+			var result = controller.Create( new User()
+			{
+				Email = "test1@grr.la",
+				Password = "12345678"
+			} );
+
+			// Assert
+			var createResult = Assert.IsType<BadRequestObjectResult>( result );
+			Assert.Equal( createResult.Value, string.Format( UserController.DuplicateEmail, "test1@grr.la" ) );
+
+		}
+
 		private UserController GetController()
 		{
 			var data = mockUsers.AsQueryable();

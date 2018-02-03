@@ -11,8 +11,8 @@ namespace UnidaysApp.Util
 			var valueBytes = KeyDerivation.Pbkdf2(
 				password: value,
 				salt: Encoding.UTF8.GetBytes( salt ),
-				prf: KeyDerivationPrf.HMACSHA512,
-				iterationCount: 10000,
+				prf: KeyDerivationPrf.HMACSHA256,
+				iterationCount: 5000,
 				numBytesRequested: 256 / 8 );
 
 			return Convert.ToBase64String( valueBytes );

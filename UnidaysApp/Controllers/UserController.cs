@@ -14,6 +14,7 @@ namespace UnidaysApp.Controllers
 		private const int MinPasswordLength = 8;
 		public const string PasswordTooShort = "Password is not long enough";
 		public const string InvalidEmail = "Email is not in a recognised format";
+		public const string DuplicateEmail = "An account already exists with email {0}";
 
 		public UserController( UserContext context )
 		{
@@ -26,6 +27,7 @@ namespace UnidaysApp.Controllers
 			}*/
 		}
 
+#if false
 		[HttpGet]
 		public IEnumerable<User> GetAll()
 		{
@@ -42,6 +44,7 @@ namespace UnidaysApp.Controllers
 			}
 			return new ObjectResult( item );
 		}
+#endif
 
 		private User GetByEmail( string email )
 		{
@@ -94,7 +97,7 @@ namespace UnidaysApp.Controllers
 			// Have we already created an account with this email address?
 			if( GetByEmail( item.Email ) != null )
 			{
-				return BadRequest( string.Format( "An account already exists with email {0}", item.Email ) );
+				return BadRequest( string.Format( DuplicateEmail, item.Email ) );
 			}
 
 			return Ok();

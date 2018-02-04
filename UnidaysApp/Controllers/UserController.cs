@@ -75,7 +75,7 @@ namespace UnidaysApp.Controllers
 			_context.Users.Add( item );
 			_context.SaveChanges();
 
-			return CreatedAtRoute( "GetUser", new { id = item.Id }, item );
+			return Ok( item );
 		}
 
 		private IActionResult ValidateInput( User item )
